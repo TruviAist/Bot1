@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
 import json
 
-# ?? Вставь сюда токен своего бота от BotFather
-TOKEN = 'ТВОЙ_ТОКЕН_ЗДЕСЬ'
-REACTION_EMOJI = '??'
+# рџ”ђ Р’СЃС‚Р°РІСЊ СЃСЋРґР° С‚РѕРєРµРЅ СЃРІРѕРµРіРѕ Р±РѕС‚Р° РѕС‚ BotFather
+TOKEN = '7291726221:AAGRvoBZbiPsdMzCOGxgqU9uH_q85GoRvy4'
+REACTION_EMOJI = 'рџ‘Ќ'
 
-# ?? Загрузка списка запрещённых слов
+# рџ“Ѓ Р—Р°РіСЂСѓР·РєР° СЃРїРёСЃРєР° Р·Р°РїСЂРµС‰С‘РЅРЅС‹С… СЃР»РѕРІ
 def load_bad_words():
     try:
         with open('bad_words.json', 'r', encoding='utf-8') as f:
@@ -15,7 +14,7 @@ def load_bad_words():
     except:
         return []
 
-# ? Проверка текста на наличие запрещённых слов
+# вќ— РџСЂРѕРІРµСЂРєР° С‚РµРєСЃС‚Р° РЅР° РЅР°Р»РёС‡РёРµ Р·Р°РїСЂРµС‰С‘РЅРЅС‹С… СЃР»РѕРІ
 def contains_bad_words(text, bad_words):
     lowered = text.lower()
     for word in bad_words:
@@ -23,7 +22,7 @@ def contains_bad_words(text, bad_words):
             return True
     return False
 
-# ?? Обработка обычных сообщений
+# рџџЁ РћР±СЂР°Р±РѕС‚РєР° РѕР±С‹С‡РЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message:
         return
@@ -34,27 +33,27 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     bad_words = load_bad_words()
 
-    # Ставим эмодзи-реакцию
+    # РЎС‚Р°РІРёРј СЌРјРѕРґР·Рё-СЂРµР°РєС†РёСЋ
     try:
         await context.bot.send_reaction(chat_id=chat_id, message_id=update.message.message_id, emoji=REACTION_EMOJI)
     except Exception as e:
-        print(f"Ошибка при установке реакции: {e}")
+        print(f"РћС€РёР±РєР° РїСЂРё СѓСЃС‚Р°РЅРѕРІРєРµ СЂРµР°РєС†РёРё: {e}")
 
-    # Проверяем на запрещённые слова
+    # РџСЂРѕРІРµСЂСЏРµРј РЅР° Р·Р°РїСЂРµС‰С‘РЅРЅС‹Рµ СЃР»РѕРІР°
     if contains_bad_words(text, bad_words):
         try:
             await update.message.delete()
             await context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
-            print(f"Забанен {user.username} за: {text}")
+            print(f"Р—Р°Р±Р°РЅРµРЅ {user.username} Р·Р°: {text}")
         except Exception as e:
-            print(f"Ошибка при удалении/бане: {e}")
+            print(f"РћС€РёР±РєР° РїСЂРё СѓРґР°Р»РµРЅРёРё/Р±Р°РЅРµ: {e}")
 
-# ?? Команда /id — присылает ID группы
+# рџ”№ РљРѕРјР°РЅРґР° /id вЂ” РїСЂРёСЃС‹Р»Р°РµС‚ ID РіСЂСѓРїРїС‹
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    await update.message.reply_text(f"ID группы: {chat_id}")
+    await update.message.reply_text(f"ID РіСЂСѓРїРїС‹: {chat_id}")
 
-# ?? Запуск бота
+# рџљЂ Р—Р°РїСѓСЃРє Р±РѕС‚Р°
 if __name__ == '__main__':
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("id", get_chat_id))
